@@ -16,10 +16,14 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+const axesHelper = new THREE.AxesHelper();
+// scene.add(axesHelper)
+
 /**
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
+const matcapTexture = textureLoader.load("/textures/matcaps/8.png");
 
 // Fonts
 
@@ -36,10 +40,47 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json/", (font) => {
     bevelOffset: 0,
     bevelSegments: 4,
   });
-  const textMaterial = new THREE.MeshBasicMaterial()
-  textMaterial.wireframe = true
-  const text = new THREE.Mesh(textGeometry, textMaterial)
-  scene.add(text)
+
+  // textGeometry.computeBoundingBox()
+  // textGeometry.translate(
+  //  - (textGeometry.boundingBox.max.x - .02) * 0.5,
+  //  - (textGeometry.boundingBox.max.y - .02) * 0.5,
+  //  - (textGeometry.boundingBox.max.z - .03) * 0.5
+  // )
+  // console.log(textGeometry.boundingBox)
+
+  textGeometry.center();
+  const material = new THREE.MeshMatcapMaterial();
+  material.matcap = matcapTexture;
+  // textMaterial.wireframe = true
+  const text = new THREE.Mesh(textGeometry, material);
+  scene.add(text);
+
+
+const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 48);
+const cubeGeometry = new THREE.BoxGeometry(.3, .3, .3)
+
+
+
+for (let i = 0; i < 100; i++) {
+
+  const donut = new THREE.Mesh(donutGeometry, material)
+  const cube = new THREE.Mesh(cubeGeometry, material)
+  donut.position.x = (Math.random() - .5) * 10
+  cube.position.x = (Math.random() - .5) * 10
+  donut.position.y = (Math.random() - .5) * 10
+  cube.position.y = (Math.random() - .5) * 10
+  donut.position.z = (Math.random() - .5) * 10
+  cube.position.z = (Math.random() - .5) * 10
+  donut.rotation.x = Math.random() * Math.PI
+  cube.rotation.x = Math.random() * Math.PI
+  donut.rotation.y = Math.random() * Math.PI
+  cube.rotation.y = Math.random() * Math.PI
+  const scale = Math.random()
+  donut.scale.set(scale, scale, scale)
+  cube.scale.set(scale, scale, scale)
+  scene.add(donut, cube);
+}
 });
 
 /**
